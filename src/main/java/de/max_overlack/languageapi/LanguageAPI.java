@@ -232,7 +232,7 @@ public final class LanguageAPI {
         for (final String placeholder : placeholders.keySet())
             message = message.replace("§" + placeholder + "§",
                     placeholders.get(placeholder));
-        return message.replace("§", "&");
+        return message.replace("&", "§");
     }
 
 }
