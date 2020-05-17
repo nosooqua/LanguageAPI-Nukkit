@@ -1,11 +1,10 @@
 package de.max_overlack.languageapi;
 
-import de.max_overlack.languageapi.RegisteredPlugin;
+import cn.nukkit.plugin.PluginBase;
 import java.util.HashMap;
 import java.util.Map;
-import org.bukkit.plugin.java.JavaPlugin;
 
-public final class LanguageAPIPlugin extends JavaPlugin {
+public final class LanguageAPIPlugin extends PluginBase {
 
     private static LanguageAPIPlugin instance;
     private final Map<String, RegisteredPlugin> registeredPlugins;

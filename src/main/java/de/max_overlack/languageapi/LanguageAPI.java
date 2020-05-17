@@ -1,10 +1,11 @@
 package de.max_overlack.languageapi;
 
+import cn.nukkit.Player;
+import cn.nukkit.command.CommandSender;
+import cn.nukkit.plugin.PluginLogger;
 import com.google.gson.Gson;
 import com.google.gson.GsonBuilder;
 import com.google.gson.reflect.TypeToken;
-import de.max_overlack.languageapi.LanguageAPIPlugin;
-import de.max_overlack.languageapi.RegisteredPlugin;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileOutputStream;
@@ -18,13 +19,6 @@ import java.util.HashSet;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
-import java.util.logging.Logger;
-import net.md_5.bungee.api.ChatColor;
-import net.md_5.bungee.api.chat.BaseComponent;
-import net.md_5.bungee.api.chat.ComponentBuilder;
-import net.md_5.bungee.api.chat.TextComponent;
-import org.bukkit.command.CommandSender;
-import org.bukkit.entity.Player;
 
 public final class LanguageAPI {
 
@@ -45,7 +39,7 @@ public final class LanguageAPI {
         if (folder.mkdir())
             return;
 
-        final Logger logger = plugin.getLogger();
+        final PluginLogger logger = plugin.getLogger();
         final Map<String, Map<String, String>> registeredPluginLanguages
         = registeredPlugin.getLanguages();
         final Gson gson = new GsonBuilder().disableHtmlEscaping().create();
@@ -61,7 +55,7 @@ public final class LanguageAPI {
                 registeredPluginLanguages.put(languageFileName.split("\\.")[0],
                         gson.fromJson(languageFileInputReader, type));
             } catch (final IOException e) {
-                logger.severe("Error while loading language file "
+                logger.alert("Error while loading language file "
                         + languageFileName + " of plugin " + name + ":");
                 e.printStackTrace();
             }
@@ -113,7 +107,7 @@ public final class LanguageAPI {
         if (!registeredPlugin.isModified())
             return;
 
-        final Logger logger = plugin.getLogger();
+        final PluginLogger logger = plugin.getLogger();
         final File languageFile = new File(new File(plugin.getDataFolder(),
                         pluginName), "en.json");
         logger.info("Creating en.json for plugin " + pluginName
@@ -121,7 +115,7 @@ public final class LanguageAPI {
         try {
             languageFile.createNewFile();
         } catch (final IOException e) {
-            logger.severe("Error while creating en.json for plugin "
+            logger.alert("Error while creating en.json for plugin "
                     + pluginName + ":");
             e.printStackTrace();
             return;
@@ -138,52 +132,10 @@ public final class LanguageAPI {
                     new TypeToken<Map<String, String>>() {}.getType(),
                     languageFileOutputWriter);
         } catch (final IOException e) {
-            logger.severe("Error while saving en.json for plugin " + pluginName
+            logger.alert("Error while saving en.json for plugin " + pluginName
                     + ":");
             e.printStackTrace();
         }
-    }
-
-    /**
-     * @param pluginName The name of your plugin.
-     * @param name The name of the message.
-     * @param sender The CommandSender that the message should be displayed to.
-     * @param placeholderReplacements Only needed if there are placeholders in
-     *                                the message. The replacements for the
-     *                                placeholders in the message. They have to
-     *                                be in the same order like the placeholders
-     *                                in the default English version of the
-     *                                message.
-     * @return The translated message as ComponentBuilder. Useful for creating
-     *         things like clickable messages.
-     */
-    public static ComponentBuilder getMessageAsComponentBuilder(
-            final String pluginName, final String name,
-            final CommandSender sender,
-            final String... placeholderReplacements) {
-        return new ComponentBuilder("").append(getMessageAsBaseComponents(
-                        pluginName, name, sender, placeholderReplacements));
-    }
-
-    /**
-     * @param pluginName The name of your plugin.
-     * @param name The name of the message.
-     * @param sender The CommandSender that the message should be displayed to.
-     * @param placeholderReplacements Only needed if there are placeholders in
-     *                                the message. The replacements for the
-     *                                placeholders in the message. They have to
-     *                                be in the same order like the placeholders
-     *                                in the default English version of the
-     *                                message.
-     * @return The translated message as BaseComponents. Useful for creating
-     *         things like clickable messages.
-     */
-    public static BaseComponent[] getMessageAsBaseComponents(
-            final String pluginName, final String name,
-            final CommandSender sender,
-            final String... placeholderReplacements) {
-        return TextComponent.fromLegacyText(getMessage(pluginName, name, sender,
-                        placeholderReplacements));
     }
 
     /**
@@ -256,7 +208,7 @@ public final class LanguageAPI {
         if (!(sender instanceof Player))
             return "en";
 
-        final String locale = ((Player) sender).getLocale();
+        final String locale = ((Player) sender).getLoginChainData().getLanguageCode();
         if (locale == null)
             return "en";
 
@@ -280,7 +232,7 @@ public final class LanguageAPI {
         for (final String placeholder : placeholders.keySet())
             message = message.replace("§" + placeholder + "§",
                     placeholders.get(placeholder));
-        return ChatColor.translateAlternateColorCodes('&', message);
+        return message.replace("§", "&");
     }
 
 }
