@@ -1,7 +1,7 @@
 # LanguageAPI
 Allows plugin developers to easily support multiple languages.
 
-This is the version for Spigot. [Click here to go to the version for BungeeCord!](https://github.com/Majoeins/LanguageAPI/tree/bungeecord)
+This is the version for Nukkit.
 
 The version for Spigot is available on SpigotMC [here](https://www.spigotmc.org/resources/languageapi.62198/) and the version for BungeeCord is available on SpigotMC [here](https://www.spigotmc.org/resources/languageapi-bungeecord.62199/).
 
